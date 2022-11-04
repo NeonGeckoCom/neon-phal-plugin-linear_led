@@ -29,8 +29,8 @@
 from setuptools import setup, find_packages
 from os import path, getenv
 
-PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring=neon_phal_plugin_led_ring.smbus_led:SmbusLedRing"
-ADMIN_PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring=neon_phal_plugin_led_ring.neopixel_led:NeopixelLedRing"
+PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring_smbus=neon_phal_plugin_led_ring.smbus_led:SmbusLedRing"
+ADMIN_PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring_neopixel=neon_phal_plugin_led_ring.neopixel_led:NeopixelLedRing"
 
 BASEDIR = path.abspath(path.dirname(__file__))
 
