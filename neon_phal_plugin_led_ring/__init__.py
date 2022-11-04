@@ -105,6 +105,7 @@ class LedRing(PHALPlugin):
         animation: LedAnimation = animations[animation_name](self.leds, color)
         with self._led_lock:
             animation.start(timeout)
+            animation.stop()
 
     def on_mic_mute(self, message):
         LOG.debug('muted')
