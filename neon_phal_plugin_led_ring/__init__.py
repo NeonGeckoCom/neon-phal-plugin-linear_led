@@ -37,6 +37,8 @@ class LedRing(PHALPlugin):
     def __init__(self, led: AbstractLed, bus=None, config=None, name=None):
         PHALPlugin.__init__(self, bus=bus, name=name, config=config)
         self.leds = led
+        self.leds.fill(Color.BLACK)
+
         self.listen_color = Color.WHITE
         self.mute_color = Color.BURNT_ORANGE
         self.sleep_color = Color.RED
