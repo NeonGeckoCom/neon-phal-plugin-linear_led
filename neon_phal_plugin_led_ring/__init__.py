@@ -55,6 +55,8 @@ class LedRing(PHALPlugin):
         self._awake_animation = LoopFillLedAnimation(self.leds, Color.BLACK,
                                                      True)
 
+        self.register_listeners()
+
     def register_listeners(self):
         self.bus.on('mycroft.mic.mute', self.on_mic_mute)
         self.bus.on('mycroft.mic.unmute', self.on_mic_unmute)
