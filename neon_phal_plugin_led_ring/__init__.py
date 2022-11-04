@@ -27,6 +27,8 @@
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from threading import RLock
+
+from mycroft_bus_client import Message
 from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from abstract_hardware_interface.led import Color, AbstractLed
@@ -61,6 +63,9 @@ class LedRing(PHALPlugin):
                                                      True)
 
         self.register_listeners()
+
+        # Check mic switch status
+        self.bus.emit(Message('mycroft.mic.status'))
 
     def init_settings(self):
         """
