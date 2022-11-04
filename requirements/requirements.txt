@@ -1,0 +1,5 @@
+abstract-hardware-interface @ git+https://github.com/neongeckocom/abstract-hardware-interface@FEAT_InitialImplementation
+sj201-interface
+ovos-plugin-manager~=0.0.19
+ovos-utils~=0.0.26
+mycroft-messagebus-client~=0.10
