@@ -26,6 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from abstract_hardware_interface.led import Color, AbstractLed
 from abstract_hardware_interface.led.animations import BreatheLedAnimation,\
@@ -61,9 +62,11 @@ class LedRing(PHALPlugin):
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
 
     def on_mic_mute(self, message):
+        LOG.debug('muted')
         self._mute_animation.start()
 
     def on_mic_unmute(self, message):
+        LOG.debug('unmuted')
         self._unmute_animation.start()
 
     def on_volume_increase(self, message):
@@ -75,9 +78,11 @@ class LedRing(PHALPlugin):
         pass
 
     def on_record_begin(self, message=None):
+        LOG.debug('record begin')
         self._listen_animation.start(self.listen_timeout_sec)
 
     def on_record_end(self, message=None):
+        LOG.debug('record end')
         self._listen_animation.stop()
 
     def on_awake(self, message=None):

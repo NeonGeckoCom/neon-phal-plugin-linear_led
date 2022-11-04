@@ -28,7 +28,7 @@
 
 from sj201_interface.led import get_led
 from sj201_interface.revisions import SJ201, detect_sj201_revision
-
+from ovos_utils.log import LOG
 from neon_phal_plugin_led_ring import LedRing
 
 
@@ -42,5 +42,6 @@ class SmbusLedRing(LedRing):
     validator = SmbusLedRingValidator
 
     def __init__(self, bus=None, config=None):
+        LOG.info(f'Initializing Smbus LEDs')
         LedRing.__init__(self, get_led(SJ201.r6), bus=bus,
                          name="neon-phal-plugin-smbus-led", config=config)

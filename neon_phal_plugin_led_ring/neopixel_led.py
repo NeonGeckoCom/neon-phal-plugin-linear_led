@@ -28,6 +28,7 @@
 
 from sj201_interface.led import get_led
 from sj201_interface.revisions import SJ201, detect_sj201_revision
+from ovos_utils.log import LOG
 
 from neon_phal_plugin_led_ring import LedRing
 
@@ -43,6 +44,6 @@ class NeopixelLedRing(LedRing):
     validator = NeopixelLedRingValidator
 
     def __init__(self, bus=None, config=None):
-        # TODO: Support other configurations
+        LOG.info(f'Initializing NeoPixel LEDs')
         LedRing.__init__(self, get_led(SJ201.r10), bus=bus,
                          name="neon-phal-plugin-neopixel-led", config=config)
