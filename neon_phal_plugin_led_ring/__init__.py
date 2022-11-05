@@ -33,7 +33,7 @@ from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from ovos_plugin_manager.hardware.led import Color, AbstractLed
 from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
-    LoopFillLedAnimation, animations, LedAnimation
+    FillLedAnimation, animations, LedAnimation
 
 
 class LedRing(PHALPlugin):
@@ -53,14 +53,14 @@ class LedRing(PHALPlugin):
         self._listen_animation = BreatheLedAnimation(self.leds,
                                                      self.listen_color)
 
-        self._mute_animation = LoopFillLedAnimation(self.leds, self.mute_color)
-        self._unmute_animation = LoopFillLedAnimation(self.leds, Color.BLACK,
-                                                      True)
+        self._mute_animation = FillLedAnimation(self.leds, self.mute_color)
+        self._unmute_animation = FillLedAnimation(self.leds, Color.BLACK,
+                                                  True)
 
-        self._sleep_animation = LoopFillLedAnimation(self.leds,
-                                                     self.sleep_color)
-        self._awake_animation = LoopFillLedAnimation(self.leds, Color.BLACK,
-                                                     True)
+        self._sleep_animation = FillLedAnimation(self.leds,
+                                                 self.sleep_color)
+        self._awake_animation = FillLedAnimation(self.leds, Color.BLACK,
+                                                 True)
 
         self.register_listeners()
 
