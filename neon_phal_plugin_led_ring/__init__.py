@@ -40,7 +40,7 @@ class LedRing(PHALPlugin):
     def __init__(self, led: AbstractLed, bus=None, config=None, name=None):
         PHALPlugin.__init__(self, bus=bus, name=name, config=config)
         self.leds = led
-        self.leds.fill(Color.BLACK)
+        self.leds.fill(Color.BLACK.as_rgb_tuple())
 
         self.listen_color = Color.WHITE
         self.mute_color = Color.BURNT_ORANGE
@@ -148,10 +148,10 @@ class LedRing(PHALPlugin):
             self._sleep_animation.start()
 
     def on_reset(self, message=None):
-        self.leds.fill(Color.BLACK)
+        self.leds.fill(Color.BLACK.as_rgb_tuple())
 
     def on_system_reset(self, message=None):
-        self.leds.fill(Color.BLACK)
+        self.leds.fill(Color.BLACK.as_rgb_tuple())
 
     def shutdown(self):
-        self.leds.fill(Color.BLACK)
+        self.leds.fill(Color.BLACK.as_rgb_tuple())
