@@ -31,8 +31,8 @@ from threading import RLock
 from mycroft_bus_client import Message
 from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
-from abstract_hardware_interface.led import Color, AbstractLed
-from abstract_hardware_interface.led.animations import BreatheLedAnimation, \
+from ovos_plugin_manager.hardware.led import Color, AbstractLed
+from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
     LoopFillLedAnimation, animations, LedAnimation
 
 
