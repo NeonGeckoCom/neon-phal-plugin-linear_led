@@ -32,14 +32,14 @@ from ovos_utils.log import LOG
 from neon_phal_plugin_linear_led import LinearLed
 
 
-class SmbusLedRingValidator:
+class SmbusLinearLedValidator:
     @staticmethod
     def validate(_=None):
         return detect_sj201_revision() == SJ201.r6
 
 
 class SmbusLinearLed(LinearLed):
-    validator = SmbusLedRingValidator
+    validator = SmbusLinearLedValidator
 
     def __init__(self, bus=None, config=None):
         LOG.info(f'Initializing Smbus LEDs')
