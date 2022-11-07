@@ -36,7 +36,7 @@ from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
     FillLedAnimation, animations, LedAnimation
 
 
-class LedRing(PHALPlugin):
+class LinearLed(PHALPlugin):
     def __init__(self, led: AbstractLed, bus=None, config=None, name=None):
         PHALPlugin.__init__(self, bus=bus, name=name, config=config)
         self.leds = led
@@ -66,6 +66,9 @@ class LedRing(PHALPlugin):
 
         # Check mic switch status
         self.bus.emit(Message('mycroft.mic.status'))
+
+        # TODO: Define a queue for animations to handle synchronous animations
+        #       and restoring persistent states
 
     def init_settings(self):
         """
@@ -100,7 +103,8 @@ class LedRing(PHALPlugin):
         self.bus.on('mycroft.mic.unmute', self.on_mic_unmute)
         self.bus.on('mycroft.volume.increase', self.on_volume_increase)
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
-        self.bus.on('neon.led_ring.show_animation', self.on_show_animation)
+        self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
+        # TODO: Define method to stop any active/queued animations
 
     def on_show_animation(self, message):
         animation_name = message.data.get('animation')

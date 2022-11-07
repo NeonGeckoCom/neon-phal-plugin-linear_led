@@ -29,8 +29,8 @@
 from setuptools import setup, find_packages
 from os import path, getenv
 
-PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring_smbus=neon_phal_plugin_led_ring.smbus_led:SmbusLedRing"
-ADMIN_PLUGIN_ENTRY_POINT = "neon-phal-plugin-led_ring_neopixel=neon_phal_plugin_led_ring.neopixel_led:NeopixelLedRing"
+PLUGIN_ENTRY_POINT = "neon-phal-plugin-linear_led_smbus=neon_phal_plugin_linear_led.smbus_led:SmbusLedRing"
+ADMIN_PLUGIN_ENTRY_POINT = "neon-phal-plugin-linear_led_neopixel=neon_phal_plugin_linear_led.neopixel_led:NeopixelLedRing"
 
 BASEDIR = path.abspath(path.dirname(__file__))
 
@@ -66,13 +66,13 @@ def get_requirements(requirements_filename: str):
 
 
 setup(
-    name='neon-phal-plugin-led_ring',
+    name='neon-phal-plugin-linear_led',
     version=version,
     license='BSD-3',
     author='Neongecko',
     author_email='developers@neon.ai',
-    url='https://github.com/NeonGeckoCom/neon-phal-plugin-led_ring',
-    description='LED Ring Interface',
+    url='https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led',
+    description='Linear/Ring LED Interface',
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=get_requirements('requirements.txt'),
