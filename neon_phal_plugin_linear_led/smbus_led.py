@@ -29,7 +29,7 @@
 from sj201_interface.led import get_led
 from sj201_interface.revisions import SJ201, detect_sj201_revision
 from ovos_utils.log import LOG
-from neon_phal_plugin_led_ring import LinearLed
+from neon_phal_plugin_linear_led import LinearLed
 
 
 class SmbusLedRingValidator:
