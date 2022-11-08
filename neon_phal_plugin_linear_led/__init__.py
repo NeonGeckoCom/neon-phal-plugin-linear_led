@@ -116,6 +116,7 @@ class LinearLed(PHALPlugin):
         color_name = message.data.get('color')
         timeout = message.data.get('timeout', 5)
         color = Color.from_name(color_name)
+        LOG.debug(f'showing animation: {animation_name}')
         animation: LedAnimation = animations[animation_name](self.leds, color)
         with self._led_lock:
             animation.start(timeout)
@@ -124,11 +125,12 @@ class LinearLed(PHALPlugin):
     def on_mic_error(self, message):
         err = message.data.get('error')
         LOG.debug(f'mic error: {err}')
-        if err == 'mic_sw_muted':
-            self._mic_muted_animation.start()
-            self.leds.fill(self.mute_color.as_rgb_tuple())
-        else:
-            LOG.info(f"unknown mic error: {err}")
+        with self._led_lock:
+            if err == 'mic_sw_muted':
+                self._mic_muted_animation.start()
+                self.leds.fill(self.mute_color.as_rgb_tuple())
+            else:
+                LOG.info(f"unknown mic error: {err}")
 
     def on_mic_mute(self, message):
         LOG.debug('muted')
