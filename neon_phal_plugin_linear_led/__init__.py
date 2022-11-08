@@ -33,7 +33,7 @@ from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from ovos_plugin_manager.hardware.led import Color, AbstractLed
 from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
-    FillLedAnimation, animations, LedAnimation
+    FillLedAnimation, BlinkLedAnimation, animations, LedAnimation
 
 
 class LinearLed(PHALPlugin):
@@ -61,6 +61,9 @@ class LinearLed(PHALPlugin):
                                                  self.sleep_color)
         self._awake_animation = FillLedAnimation(self.leds, Color.BLACK,
                                                  True)
+
+        self._mic_muted_animation = BlinkLedAnimation(self.leds,
+                                                      self.mute_color)
 
         self.register_listeners()
 
@@ -101,6 +104,7 @@ class LinearLed(PHALPlugin):
     def register_listeners(self):
         self.bus.on('mycroft.mic.mute', self.on_mic_mute)
         self.bus.on('mycroft.mic.unmute', self.on_mic_unmute)
+        self.bus.on('mycroft.mic.error', self.on_mic_error)
         self.bus.on('mycroft.volume.increase', self.on_volume_increase)
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
@@ -115,6 +119,15 @@ class LinearLed(PHALPlugin):
         with self._led_lock:
             animation.start(timeout)
             animation.stop()
+
+    def on_mic_error(self, message):
+        LOG.debug('mic error')
+        err = message.data.get('error')
+        if err == 'mic_sw_muted':
+            self._mic_muted_animation.start()
+            self.leds.fill(self.mute_color.as_rgb_tuple())
+        else:
+            LOG.info(f"unknown mic error: {err}")
 
     def on_mic_mute(self, message):
         LOG.debug('muted')
