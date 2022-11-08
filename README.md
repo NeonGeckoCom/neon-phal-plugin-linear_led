@@ -7,7 +7,7 @@ explicitly in the system configuration in `/etc`.
 ```yaml
 PHAL:
   admin:
-    neon-phal-plugin-linear_led_neopixel:
+    neon-phal-plugin-linear-led-neopixel:
       enabled: true
 ```
 >*Note*: If any other config is present here (i.e. colors), it will override 
