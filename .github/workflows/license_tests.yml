@@ -32,7 +32,7 @@ jobs:
           requirements: 'requirements-all.txt'
           fail: 'Copyleft,Other,Error'
           fails-only: true
-          exclude: '^(tqdm).*|^(neon-phal-plugin-fan).*'
+          exclude: '^(tqdm).*|^(neon-phal-plugin-linear_led).*'
           exclude-license: '^(Mozilla).*$'
       - name: Print report
         if: ${{ always() }}
