@@ -63,7 +63,8 @@ class LinearLed(PHALPlugin):
                                                  True)
 
         self._mic_muted_animation = BlinkLedAnimation(self.leds,
-                                                      self.mute_color)
+                                                      self.mute_color,
+                                                      3, False)
 
         self.register_listeners()
 
@@ -121,8 +122,8 @@ class LinearLed(PHALPlugin):
             animation.stop()
 
     def on_mic_error(self, message):
-        LOG.debug('mic error')
         err = message.data.get('error')
+        LOG.debug(f'mic error: {err}')
         if err == 'mic_sw_muted':
             self._mic_muted_animation.start()
             self.leds.fill(self.mute_color.as_rgb_tuple())
