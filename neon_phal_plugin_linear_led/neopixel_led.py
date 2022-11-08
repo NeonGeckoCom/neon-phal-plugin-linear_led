@@ -45,5 +45,8 @@ class NeopixelLinearLed(LinearLed):
 
     def __init__(self, bus=None, config=None):
         LOG.info(f'Initializing NeoPixel LEDs')
+        if set(config.keys()) == {'enabled'}:
+            # Admin config just enables plugin, choose default PHAL config
+            config = None
         LinearLed.__init__(self, get_led(SJ201.r10), bus=bus,
                            name="neon-phal-plugin-linear-led", config=config)

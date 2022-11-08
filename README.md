@@ -7,16 +7,19 @@ explicitly in the system configuration in `/etc`.
 ```yaml
 PHAL:
   admin:
-    neon-phal-plugin-linear-led:
+    neon-phal-plugin-linear_led_neopixel:
       enabled: true
 ```
+>*Note*: If any other config is present here (i.e. colors), it will override 
+> all configuration in `PHAL.neon-phal-plugin-linear-led` for Neopixel devices.
+> It is recommended to not include config here so that it applies to all linear
+> LED classes.
 
 ### Colors
 By default, the plugin will use theme colors for different events, but these
 colors may also be overridden in configuration.
 ```yaml
 PHAL:
-  # NOTE: if using Neopixel devices, this needs to be under `admin` as noted above
   neon-phal-plugin-linear-led:
     listen_color: white
     mute_color: burnt_orange
