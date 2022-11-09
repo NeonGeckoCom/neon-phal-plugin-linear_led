@@ -116,9 +116,9 @@ class LinearLed(PHALPlugin):
         # TODO: Define method to stop any active/queued animations
 
     def on_theme_update(self, message):
-        LOG.debug("Updating theme color(s)")
+        LOG.debug(f"Updating theme color(s): {message.data}")
         try:
-            color = message.data.get('primaryColor')
+            color = message.data.get('secondaryColor')
             Color.set_theme(color)
             LOG.debug(f'LED Theme color set to {Color.THEME.as_rgb_tuple()}')
         except Exception as e:
