@@ -42,7 +42,7 @@ class LinearLed(PHALPlugin):
         self.leds = led
         self.leds.fill(Color.BLACK.as_rgb_tuple())
 
-        self.listen_color = Color.WHITE
+        self.listen_color = Color.THEME
         self.mute_color = Color.BURNT_ORANGE
         self.sleep_color = Color.RED
         self.init_settings()
@@ -68,6 +68,9 @@ class LinearLed(PHALPlugin):
 
         self.register_listeners()
 
+        # Get theme colors
+        self.bus.emit(Message('ovos.theme.get'))
+
         # Check mic switch status
         self.bus.emit(Message('mycroft.mic.status'))
 
@@ -80,11 +83,11 @@ class LinearLed(PHALPlugin):
         """
         try:
             self.listen_color = Color.from_name(
-                self.config.get('listen_color') or 'white')
+                self.config.get('listen_color') or 'theme')
         except ValueError:
             LOG.warning(f'invalid color in config: '
                         f'{self.config.get("listen_color")}')
-            self.listen_color = Color.WHITE
+            self.listen_color = Color.THEME
 
         try:
             self.mute_color = Color.from_name(
@@ -109,7 +112,17 @@ class LinearLed(PHALPlugin):
         self.bus.on('mycroft.volume.increase', self.on_volume_increase)
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
+        self.bus.on('ovos.theme.get.response', self.on_theme_update)
         # TODO: Define method to stop any active/queued animations
+
+    def on_theme_update(self, message):
+        LOG.debug("Updating theme color(s)")
+        try:
+            color = message.data.get('primaryColor')
+            Color.set_theme(color)
+            LOG.debug(f'LED Theme color set to {Color.THEME.as_rgb_tuple()}')
+        except Exception as e:
+            LOG.exception(e)
 
     def on_show_animation(self, message):
         animation_name = message.data.get('animation')
