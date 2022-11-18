@@ -24,6 +24,18 @@ PHAL:
     listen_color: white
     mute_color: burnt_orange
     sleep_color: red
+    error_color: red
+```
+
+### Optional Event Animations
+There are standard messagebus events that you can choose to show animations for.
+These are disabled by default, but may be desirable to provide more user feedback
+or troubleshoot specific error cases.
+```yaml
+PHAL:
+  neon-phal-plugin-linear-led:
+    utterance_animation: refill
+    handler_animation: bounce
 ```
 
 ## messagebus API
