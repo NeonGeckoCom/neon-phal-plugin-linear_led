@@ -161,14 +161,14 @@ class LinearLed(PHALPlugin):
         if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
-                self._handler_animation.start(timeout=0)
+                self._handler_animation.start(timeout=1)
 
     def on_utterance(self, message):
         LOG.debug(f'utterance | {self._utterance_animation}')
         if self._utterance_animation is not None:
             LOG.debug('utterance animation')
             with self._led_lock:
-                self._utterance_animation.start(timeout=0)
+                self._utterance_animation.start(timeout=1)
 
     def on_theme_update(self, message):
         LOG.debug(f"Updating theme color(s): {message.data}")
