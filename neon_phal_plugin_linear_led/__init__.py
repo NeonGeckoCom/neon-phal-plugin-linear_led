@@ -159,15 +159,15 @@ class LinearLed(PHALPlugin):
             self._speech_error_animation.start()
 
     def on_skill_handler_start(self, message):
-        LOG.debug('handler_start')
-        if self._handler_animation:
+        LOG.debug(f'handler_start | {self._handler_animation}')
+        if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
                 self._handler_animation.start(timeout=0)
 
     def on_utterance(self, message):
-        LOG.debug('utterance')
-        if self._utterance_animation:
+        LOG.debug(f'utterance | {self._utterance_animation}')
+        if self._utterance_animation is not None:
             LOG.debug('utterance animation')
             with self._led_lock:
                 self._utterance_animation.start(timeout=0)
