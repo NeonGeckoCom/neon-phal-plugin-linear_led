@@ -47,6 +47,9 @@ class LinearLed(PHALPlugin):
         self.sleep_color = Color.RED
         self.error_color = Color.RED
 
+        self._utterance_animation = None
+        self._handler_animation = None
+
         self.init_settings()
 
         self._led_lock = RLock()
@@ -71,9 +74,6 @@ class LinearLed(PHALPlugin):
         self._speech_error_animation = BlinkLedAnimation(self.leds,
                                                          self.error_color,
                                                          1, False)
-
-        self._utterance_animation = None
-        self._handler_animation = None
 
         self.register_listeners()
 
@@ -127,13 +127,11 @@ class LinearLed(PHALPlugin):
             if animations.get(self.config['utterance_animation']):
                 clazz = animations[self.config['utterance_animation']]
                 self._utterance_animation = clazz(self.leds, Color.THEME)
-                LOG.info('Configured utterance_animation')
 
         if self.config.get('handler_animation'):
             if animations.get(self.config['handler_animation']):
                 clazz = animations[self.config['handler_animation']]
                 self._handler_animation = clazz(self.leds, Color.THEME)
-                LOG.info('Configured handler_animation')
 
     def register_listeners(self):
         # Audio hardware handlers
