@@ -127,11 +127,13 @@ class LinearLed(PHALPlugin):
             if animations.get(self.config['utterance_animation']):
                 clazz = animations[self.config['utterance_animation']]
                 self._utterance_animation = clazz(self.leds, Color.THEME)
+                LOG.info('Configured utterance_animation')
 
         if self.config.get('handler_animation'):
             if animations.get(self.config['handler_animation']):
                 clazz = animations[self.config['handler_animation']]
                 self._handler_animation = clazz(self.leds, Color.THEME)
+                LOG.info('Configured handler_animation')
 
     def register_listeners(self):
         # Audio hardware handlers
