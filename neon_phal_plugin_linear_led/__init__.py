@@ -75,6 +75,10 @@ class LinearLed(PHALPlugin):
                                                          self.error_color,
                                                          1, False)
 
+        self._intent_error_animation = BlinkLedAnimation(self.leds,
+                                                         self.error_color,
+                                                         4, False)
+
         self.register_listeners()
 
         # Get theme colors
@@ -148,16 +152,20 @@ class LinearLed(PHALPlugin):
         # User interaction handlers
         self.bus.on('recognizer_loop:utterance', self.on_utterance)
         self.bus.on('mycroft.skill.handler.start', self.on_skill_handler_start)
+        self.bus.on('complete_intent_failure', self.on_complete_intent_failure)
         self.bus.on('mycroft.speech.recognition.unknown',
                     self.on_recognition_unknown)
         # TODO: Define method to stop any active/queued animations
+
+    def on_complete_intent_failure(self, message):
+        with self._led_lock:
+            self._intent_error_animation.start()
 
     def on_recognition_unknown(self, message):
         with self._led_lock:
             self._speech_error_animation.start()
 
     def on_skill_handler_start(self, message):
-        LOG.debug(f'handler_start | {self._handler_animation}')
         if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
