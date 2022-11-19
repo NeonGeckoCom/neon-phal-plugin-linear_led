@@ -159,24 +159,24 @@ class LinearLed(PHALPlugin):
 
     def on_complete_intent_failure(self, message):
         with self._led_lock:
-            self._intent_error_animation.start()
+            self._intent_error_animation.start(one_shot=True)
 
     def on_recognition_unknown(self, message):
         with self._led_lock:
-            self._speech_error_animation.start()
+            self._speech_error_animation.start(one_shot=True)
 
     def on_skill_handler_start(self, message):
         if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
-                self._handler_animation.start(timeout=1)
+                self._handler_animation.start(one_shot=True)
 
     def on_utterance(self, message):
         LOG.debug(f'utterance | {self._utterance_animation}')
         if self._utterance_animation is not None:
             LOG.debug('utterance animation')
             with self._led_lock:
-                self._utterance_animation.start(timeout=1)
+                self._utterance_animation.start(one_shot=True)
 
     def on_theme_update(self, message):
         LOG.debug(f"Updating theme color(s): {message.data}")
