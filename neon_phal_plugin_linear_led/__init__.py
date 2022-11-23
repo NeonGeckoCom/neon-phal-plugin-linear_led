@@ -45,6 +45,11 @@ class LinearLed(PHALPlugin):
         self.listen_color = Color.THEME
         self.mute_color = Color.BURNT_ORANGE
         self.sleep_color = Color.RED
+        self.error_color = Color.RED
+
+        self._utterance_animation = None
+        self._handler_animation = None
+
         self.init_settings()
 
         self._led_lock = RLock()
@@ -65,6 +70,14 @@ class LinearLed(PHALPlugin):
         self._mic_muted_animation = BlinkLedAnimation(self.leds,
                                                       self.mute_color,
                                                       3, False)
+
+        self._speech_error_animation = BlinkLedAnimation(self.leds,
+                                                         self.error_color,
+                                                         1, False)
+
+        self._intent_error_animation = BlinkLedAnimation(self.leds,
+                                                         self.error_color,
+                                                         4, False)
 
         self.register_listeners()
 
@@ -95,7 +108,7 @@ class LinearLed(PHALPlugin):
         except ValueError:
             LOG.warning(f'invalid color in config: '
                         f'{self.config.get("mute_color")}')
-            self.listen_color = Color.BURNT_ORANGE
+            self.mute_color = Color.BURNT_ORANGE
 
         try:
             self.sleep_color = Color.from_name(
@@ -103,17 +116,67 @@ class LinearLed(PHALPlugin):
         except ValueError:
             LOG.warning(f'invalid color in config: '
                         f'{self.config.get("sleep_color")}')
-            self.listen_color = Color.RED
+            self.sleep_color = Color.RED
+
+        try:
+            self.error_color = Color.from_name(
+                self.config.get('error_color') or 'red'
+            )
+        except ValueError:
+            LOG.warning(f'invalid color in config: '
+                        f'{self.config.get("error_color")}')
+            self.error_color = Color.RED
+
+        if self.config.get('utterance_animation'):
+            if animations.get(self.config['utterance_animation']):
+                clazz = animations[self.config['utterance_animation']]
+                self._utterance_animation = clazz(self.leds, Color.THEME)
+
+        if self.config.get('handler_animation'):
+            if animations.get(self.config['handler_animation']):
+                clazz = animations[self.config['handler_animation']]
+                self._handler_animation = clazz(self.leds, Color.THEME)
 
     def register_listeners(self):
+        # Audio hardware handlers
         self.bus.on('mycroft.mic.mute', self.on_mic_mute)
         self.bus.on('mycroft.mic.unmute', self.on_mic_unmute)
         self.bus.on('mycroft.mic.error', self.on_mic_error)
         self.bus.on('mycroft.volume.increase', self.on_volume_increase)
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
+
+        # Core API handlers
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
         self.bus.on('ovos.theme.get.response', self.on_theme_update)
+
+        # User interaction handlers
+        self.bus.on('recognizer_loop:utterance', self.on_utterance)
+        self.bus.on('mycroft.skill.handler.start', self.on_skill_handler_start)
+        self.bus.on('complete_intent_failure', self.on_complete_intent_failure)
+        self.bus.on('mycroft.speech.recognition.unknown',
+                    self.on_recognition_unknown)
         # TODO: Define method to stop any active/queued animations
+
+    def on_complete_intent_failure(self, message):
+        with self._led_lock:
+            self._intent_error_animation.start(one_shot=True)
+
+    def on_recognition_unknown(self, message):
+        with self._led_lock:
+            self._speech_error_animation.start(one_shot=True)
+
+    def on_skill_handler_start(self, message):
+        if self._handler_animation is not None:
+            LOG.debug('handler animation')
+            with self._led_lock:
+                self._handler_animation.start(one_shot=True)
+
+    def on_utterance(self, message):
+        LOG.debug(f'utterance | {self._utterance_animation}')
+        if self._utterance_animation is not None:
+            LOG.debug('utterance animation')
+            with self._led_lock:
+                self._utterance_animation.start(one_shot=True)
 
     def on_theme_update(self, message):
         LOG.debug(f"Updating theme color(s): {message.data}")
