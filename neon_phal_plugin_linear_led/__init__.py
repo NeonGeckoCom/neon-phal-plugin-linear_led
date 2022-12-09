@@ -159,6 +159,7 @@ class LinearLed(PHALPlugin):
 
         # Internet event handler
         self.bus.on('mycroft.internet.connected', self.on_internet_connected)
+        self.bus.on('ovos.phal.wifi.plugin.fully_offline', self.on_fully_offline)
 
         # Core API handlers
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
@@ -171,6 +172,10 @@ class LinearLed(PHALPlugin):
         self.bus.on('mycroft.speech.recognition.unknown',
                     self.on_recognition_unknown)
         # TODO: Define method to stop any active/queued animations
+
+    def on_fully_offline(self, message):
+        LOG.info("Wifi plugin notified fully offline mode selected")
+        self._internet_disconnected = False
 
     def on_no_internet(self, message=None):
         LOG.debug("Bus notified no internet")
