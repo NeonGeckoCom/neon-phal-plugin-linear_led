@@ -179,10 +179,11 @@ class LinearLed(PHALPlugin):
         if resp and not resp.data.get('watchdog_active'):
             LOG.info(f"Watchdog inactive: {resp.data}")
             return
+        LOG.debug(f"Starting Internet Disconnected Animation")
         # TODO: Check ready settings and skill internet setting in config?
         while self._internet_disconnected:
             with self._led_lock:
-                self._disconnected_animation.start()
+                self._disconnected_animation.start(one_shot=True)
 
     def on_internet_connected(self, message):
         self._internet_disconnected = False
