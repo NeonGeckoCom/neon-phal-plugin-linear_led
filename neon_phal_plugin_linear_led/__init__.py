@@ -96,6 +96,7 @@ class LinearLed(PHALPlugin):
 
         # Start internet animation
         if self._internet_disconnected:
+            LOG.debug("No internet at init")
             self.on_no_internet()
 
         # TODO: Define a queue for animations to handle synchronous animations
@@ -172,6 +173,7 @@ class LinearLed(PHALPlugin):
         # TODO: Define method to stop any active/queued animations
 
     def on_no_internet(self, message=None):
+        LOG.debug("Bus notified no internet")
         self._internet_disconnected = True
         message = message.forward("ovos.phal.wifi.plugin.status") if \
             message else Message("ovos.phal.wifi.plugin.status")
