@@ -33,7 +33,8 @@ from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from ovos_plugin_manager.hardware.led import Color, AbstractLed
 from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
-    FillLedAnimation, BlinkLedAnimation, animations, LedAnimation
+    FillLedAnimation, BlinkLedAnimation, AlternatingLedAnimation,\
+    animations, LedAnimation
 from ovos_utils.network_utils import is_connected
 
 
@@ -83,8 +84,8 @@ class LinearLed(PHALPlugin):
                                                          self.error_color,
                                                          4, False)
 
-        self._disconnected_animation = BreatheLedAnimation(self.leds,
-                                                           self.error_color)
+        self._disconnected_animation = AlternatingLedAnimation(self.leds,
+                                                               self.error_color)
 
         self.register_listeners()
 
@@ -176,6 +177,7 @@ class LinearLed(PHALPlugin):
     def on_fully_offline(self, message):
         LOG.info("Wifi plugin notified fully offline mode selected")
         self._internet_disconnected = False
+        self._disconnected_animation.stop()
 
     def on_no_internet(self, message=None):
         LOG.debug("Bus notified no internet")
@@ -190,10 +192,11 @@ class LinearLed(PHALPlugin):
         # TODO: Check ready settings and skill internet setting in config?
         while self._internet_disconnected:
             with self._led_lock:
-                self._disconnected_animation.start(one_shot=True)
+                self._disconnected_animation.start()
 
     def on_internet_connected(self, message):
         self._internet_disconnected = False
+        self._disconnected_animation.stop()
 
     def on_complete_intent_failure(self, message):
         with self._led_lock:
