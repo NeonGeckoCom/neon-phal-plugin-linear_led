@@ -190,9 +190,8 @@ class LinearLed(PHALPlugin):
             return
         LOG.debug(f"Starting Internet Disconnected Animation")
         # TODO: Check ready settings and skill internet setting in config?
-        while self._internet_disconnected:
-            with self._led_lock:
-                self._disconnected_animation.start()
+        with self._led_lock:
+            self._disconnected_animation.start()
 
     def on_internet_connected(self, message):
         self._internet_disconnected = False
