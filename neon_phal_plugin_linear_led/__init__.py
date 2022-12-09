@@ -195,6 +195,7 @@ class LinearLed(PHALPlugin):
             self._disconnected_animation.start()
 
     def on_internet_connected(self, message):
+        LOG.debug(f"Internet connection re-established")
         self._internet_disconnected = False
         self._disconnected_animation.stop()
 
