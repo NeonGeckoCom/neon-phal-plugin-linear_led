@@ -160,7 +160,7 @@ class LinearLed(PHALPlugin):
 
         # Internet event handler
         self.bus.on('mycroft.internet.connected', self.on_internet_connected)
-        self.bus.on("ovos.wifi.setup.completed", self.on_internet_connected)
+        # self.bus.on("ovos.wifi.setup.completed", self.on_internet_connected)
         self.bus.on('ovos.phal.wifi.plugin.fully_offline', self.on_fully_offline)
 
         # Core API handlers
