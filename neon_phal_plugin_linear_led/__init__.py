@@ -182,6 +182,9 @@ class LinearLed(PHALPlugin):
 
     def on_no_internet(self, message=None):
         LOG.debug("Bus notified no internet")
+        if self._internet_disconnected:
+            LOG.debug(f"Already disconnected")
+            return
         self._internet_disconnected = True
         message = message.forward("ovos.phal.wifi.plugin.status") if \
             message else Message("ovos.phal.wifi.plugin.status")
