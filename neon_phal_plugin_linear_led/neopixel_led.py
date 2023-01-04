@@ -33,7 +33,7 @@ from ovos_utils.log import LOG
 from neon_phal_plugin_linear_led import LinearLed
 
 
-class NeonpixelLinearLedValidator:
+class NeopixelLinearLedValidator:
     @staticmethod
     def validate(_=None):
         # TODO: Support other configurations
@@ -41,7 +41,7 @@ class NeonpixelLinearLedValidator:
 
 
 class NeopixelLinearLed(LinearLed):
-    validator = NeonpixelLinearLedValidator
+    validator = NeopixelLinearLedValidator
 
     def __init__(self, bus=None, config=None):
         LOG.info(f'Initializing NeoPixel LEDs')
