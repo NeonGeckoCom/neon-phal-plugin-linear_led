@@ -40,12 +40,14 @@ from ovos_utils.network_utils import is_connected
 
 class LinearLed(PHALPlugin):
     def __init__(self, led: AbstractLed, bus=None, config=None, name=None):
-        PHALPlugin.__init__(self, bus=bus, name=name, config=config)
         self.leds = led
         self.leds.fill(Color.BLACK.as_rgb_tuple())
 
         self._is_muted = False
         self._internet_disconnected = not is_connected()
+
+        # Init bus listeners after `_internet_disconnected` is defined
+        PHALPlugin.__init__(self, bus=bus, name=name, config=config)
 
         self.listen_color = Color.THEME
         self.mute_color = Color.BURNT_ORANGE
