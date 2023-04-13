@@ -38,6 +38,17 @@ from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
 from ovos_utils.network_utils import is_connected
 
 
+def transient_animation(func):
+    """
+    Mark a method as transient and check for persistent states on animation end.
+    """
+    def wrapper(self, *args, **kwargs):
+        func(self, *args, **kwargs)
+        self.check_state()
+
+    return wrapper
+
+
 class LinearLed(PHALPlugin):
     def __init__(self, led: AbstractLed, bus=None, config=None, name=None):
         self.leds = led
@@ -177,6 +188,16 @@ class LinearLed(PHALPlugin):
                     self.on_recognition_unknown)
         # TODO: Define method to stop any active/queued animations
 
+    def check_state(self):
+        """
+        Check current state and show a persistent animation as appropriate.
+        """
+        if self._is_muted:
+            self.on_mic_mute()
+        elif self._internet_disconnected:
+            self.on_no_internet()
+
+    @transient_animation
     def on_fully_offline(self, message):
         LOG.info("Wifi plugin notified fully offline mode selected")
         self._internet_disconnected = False
@@ -199,25 +220,30 @@ class LinearLed(PHALPlugin):
         with self._led_lock:
             self._disconnected_animation.start()
 
+    @transient_animation
     def on_internet_connected(self, message):
         LOG.debug(f"Internet connection re-established")
         self._internet_disconnected = False
         self._disconnected_animation.stop()
 
+    @transient_animation
     def on_complete_intent_failure(self, message):
         with self._led_lock:
             self._intent_error_animation.start(one_shot=True)
 
+    @transient_animation
     def on_recognition_unknown(self, message):
         with self._led_lock:
             self._speech_error_animation.start(one_shot=True)
 
+    @transient_animation
     def on_skill_handler_start(self, message):
         if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
                 self._handler_animation.start(one_shot=True)
 
+    @transient_animation
     def on_utterance(self, message):
         LOG.debug(f'utterance | {self._utterance_animation}')
         if self._utterance_animation is not None:
@@ -234,6 +260,7 @@ class LinearLed(PHALPlugin):
         except Exception as e:
             LOG.exception(e)
 
+    @transient_animation
     def on_show_animation(self, message):
         animation_name = message.data.get('animation')
         color_name = message.data.get('color')
@@ -245,6 +272,7 @@ class LinearLed(PHALPlugin):
             animation.start(timeout)
             animation.stop()
 
+    @transient_animation
     def on_mic_error(self, message):
         err = message.data.get('error')
         LOG.debug(f'mic error: {err}')
@@ -255,35 +283,41 @@ class LinearLed(PHALPlugin):
             else:
                 LOG.info(f"unknown mic error: {err}")
 
-    def on_mic_mute(self, message):
+    def on_mic_mute(self, message=None):
         LOG.debug('muted')
         with self._led_lock:
             self._is_muted = True
             self._mute_animation.start()
 
+    @transient_animation
     def on_mic_unmute(self, message):
         LOG.debug('unmuted')
         with self._led_lock:
             self._is_muted = False
             self._unmute_animation.start()
 
+    @transient_animation
     def on_volume_increase(self, message):
         # TODO: Get volume and fill LEDs accordingly
         pass
 
+    @transient_animation
     def on_volume_decrease(self, message):
         # TODO: Get volume and fill LEDs accordingly
         pass
 
+    @transient_animation
     def on_record_begin(self, message=None):
         LOG.debug('record begin')
         with self._led_lock:
             self._listen_animation.start(self.listen_timeout_sec)
 
+    @transient_animation
     def on_record_end(self, message=None):
         LOG.debug('record end')
         self._listen_animation.stop()
 
+    @transient_animation
     def on_awake(self, message=None):
         with self._led_lock:
             self._awake_animation.start()
