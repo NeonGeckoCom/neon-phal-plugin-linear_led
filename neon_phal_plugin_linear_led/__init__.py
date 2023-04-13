@@ -193,17 +193,27 @@ class LinearLed(PHALPlugin):
         Check current state and show a persistent animation as appropriate.
         """
         if self._is_muted:
+            LOG.debug("Mic Muted")
             self.on_mic_mute()
         elif self._internet_disconnected:
+            LOG.debug("Internet Disconnected")
             self.on_no_internet()
 
     @transient_animation
     def on_fully_offline(self, message):
+        """
+        Handle an event notifying the user selected offline operation
+        :param message: Message object
+        """
         LOG.info("Wifi plugin notified fully offline mode selected")
         self._internet_disconnected = False
         self._disconnected_animation.stop()
 
     def on_no_internet(self, message=None):
+        """
+        Handle an event notifying internet connection was unexpectedly lost.
+        :param message: Message object
+        """
         LOG.debug("Bus notified no internet")
         if self._internet_disconnected:
             LOG.debug(f"Already disconnected")
@@ -222,22 +232,38 @@ class LinearLed(PHALPlugin):
 
     @transient_animation
     def on_internet_connected(self, message):
+        """
+        Handle an event notifying internet connection has been established.
+        :param message: Message object
+        """
         LOG.debug(f"Internet connection re-established")
         self._internet_disconnected = False
         self._disconnected_animation.stop()
 
     @transient_animation
     def on_complete_intent_failure(self, message):
+        """
+        Handle an event notifying intent service failure.
+        :param message: Message object
+        """
         with self._led_lock:
             self._intent_error_animation.start(one_shot=True)
 
     @transient_animation
     def on_recognition_unknown(self, message):
+        """
+        Handle an event notifying STT transcribed no words.
+        :param message: Message object
+        """
         with self._led_lock:
             self._speech_error_animation.start(one_shot=True)
 
     @transient_animation
     def on_skill_handler_start(self, message):
+        """
+        Handle an event notifying a skill intent handler has been called.
+        :param message: Message object
+        """
         if self._handler_animation is not None:
             LOG.debug('handler animation')
             with self._led_lock:
@@ -246,12 +272,20 @@ class LinearLed(PHALPlugin):
     @transient_animation
     def on_utterance(self, message):
         LOG.debug(f'utterance | {self._utterance_animation}')
+        """
+        Handle an event notifying an utterance is being processed.
+        :param message: Message object
+        """
         if self._utterance_animation is not None:
             LOG.debug('utterance animation')
             with self._led_lock:
                 self._utterance_animation.start(one_shot=True)
 
     def on_theme_update(self, message):
+        """
+        Handle an event notifying theme colors have been changed.
+        :param message: Message object
+        """
         LOG.debug(f"Updating theme color(s): {message.data}")
         try:
             color = message.data.get('secondaryColor')
@@ -262,6 +296,10 @@ class LinearLed(PHALPlugin):
 
     @transient_animation
     def on_show_animation(self, message):
+        """
+        Handle an event requesting a particular animation be displayed.
+        :param message: Message object containing animation request
+        """
         animation_name = message.data.get('animation')
         color_name = message.data.get('color')
         timeout = message.data.get('timeout', 5)
@@ -274,6 +312,10 @@ class LinearLed(PHALPlugin):
 
     @transient_animation
     def on_mic_error(self, message):
+        """
+        Handle an event notifying a microphone error has occurred.
+        :param message: Message object
+        """
         err = message.data.get('error')
         LOG.debug(f'mic error: {err}')
         with self._led_lock:
@@ -284,6 +326,10 @@ class LinearLed(PHALPlugin):
                 LOG.info(f"unknown mic error: {err}")
 
     def on_mic_mute(self, message=None):
+        """
+        Handle an event notifying the mic has been muted. (persistent LED state)
+        :param message: Message object
+        """
         LOG.debug('muted')
         with self._led_lock:
             self._is_muted = True
@@ -291,6 +337,10 @@ class LinearLed(PHALPlugin):
 
     @transient_animation
     def on_mic_unmute(self, message):
+        """
+        Handle an event notifying the mic has been unmuted.
+        :param message: Message object
+        """
         LOG.debug('unmuted')
         with self._led_lock:
             self._is_muted = False
@@ -298,39 +348,80 @@ class LinearLed(PHALPlugin):
 
     @transient_animation
     def on_volume_increase(self, message):
+        """
+        Handle an event notifying volume was increased.
+        :param message: Message object
+        """
         # TODO: Get volume and fill LEDs accordingly
         pass
 
     @transient_animation
     def on_volume_decrease(self, message):
+        """
+        Handle an event notifying volume was decreased.
+        :param message: Message object
+        """
         # TODO: Get volume and fill LEDs accordingly
         pass
 
-    @transient_animation
     def on_record_begin(self, message=None):
+        """
+        Handle an event notifying recording has begun (wake word detected).
+        :param message: Message object
+        """
         LOG.debug('record begin')
         with self._led_lock:
             self._listen_animation.start(self.listen_timeout_sec)
 
     @transient_animation
     def on_record_end(self, message=None):
+        """
+        Handle an event notifying utterance recording has ended.
+        :param message: Message object
+        """
         LOG.debug('record end')
         self._listen_animation.stop()
 
     @transient_animation
     def on_awake(self, message=None):
+        """
+        Handle an event notifying the listener has woken up.
+        :param message: Message object
+        """
         with self._led_lock:
             self._awake_animation.start()
 
     def on_sleep(self, message=None):
+        """
+        Handle an event notifying listener has gone to sleep. (persistent)
+        :param message: Message object
+        """
         with self._led_lock:
             self._sleep_animation.start()
 
+    @transient_animation
     def on_reset(self, message=None):
+        """
+        Handle an event requesting LEDs be reset. Inserts a black fill animation
+        before returning to a persistent state.
+        :param message: Message object
+        """
+        # TODO: interrupt any other animations?
         self.leds.fill(Color.BLACK.as_rgb_tuple())
 
+    @transient_animation
     def on_system_reset(self, message=None):
+        """
+        Handle an event requesting LEDs be reset. Inserts a black fill animation
+        before returning to a persistent state.
+        :param message: Message object
+        """
+        # TODO: interrupt any other animations?
         self.leds.fill(Color.BLACK.as_rgb_tuple())
 
     def shutdown(self):
+        """
+        Handle a shutdown event. Reset LED's to an off state.
+        """
+        # TODO: interrupt any other animations?
         self.leds.fill(Color.BLACK.as_rgb_tuple())
