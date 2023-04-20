@@ -56,7 +56,9 @@ class LinearLed(PHALPlugin):
 
         self._is_muted = False
         self._internet_disconnected = not is_connected()
+
         # Assume initial state as default (until connection)
+        # TODO: Read fully offline setting from config
         self._fully_offline = self._internet_disconnected
 
         # Init bus listeners after `_internet_disconnected` is defined
@@ -175,8 +177,14 @@ class LinearLed(PHALPlugin):
 
         # Network event handler
         self.bus.on("mycroft.network.state", self.on_network_state)
+
+        # TODO: below events should be consumed in connectivity events plugin
+        #       directly
+        # Plugin notify offline mode selected
         self.bus.on('ovos.phal.wifi.plugin.fully_offline',
                     self.on_fully_offline)
+        # Generic internet connected notification
+        self.bus.on('mycroft.internet.connected', self.on_internet_connected)
 
         # Core API handlers
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
@@ -239,7 +247,6 @@ class LinearLed(PHALPlugin):
             return
         self._internet_disconnected = True
         LOG.debug(f"Starting Internet Disconnected Animation")
-        # TODO: Check ready settings and skill internet setting in config?
         with self._led_lock:
             self._disconnected_animation.start()
 
