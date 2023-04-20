@@ -57,6 +57,10 @@ class LinearLed(PHALPlugin):
         self._is_muted = False
         self._internet_disconnected = not is_connected()
 
+        # Assume initial state as default (until connection)
+        # TODO: Read fully offline setting from config
+        self._fully_offline = self._internet_disconnected
+
         # Init bus listeners after `_internet_disconnected` is defined
         PHALPlugin.__init__(self, bus=bus, name=name, config=config)
 
@@ -171,10 +175,16 @@ class LinearLed(PHALPlugin):
         self.bus.on('mycroft.volume.increase', self.on_volume_increase)
         self.bus.on('mycroft.volume.decrease', self.on_volume_decrease)
 
-        # Internet event handler
+        # Network event handler
+        self.bus.on("mycroft.network.state", self.on_network_state)
+
+        # TODO: below events should be consumed in connectivity events plugin
+        #       directly
+        # Plugin notify offline mode selected
+        self.bus.on('ovos.phal.wifi.plugin.fully_offline',
+                    self.on_fully_offline)
+        # Generic internet connected notification
         self.bus.on('mycroft.internet.connected', self.on_internet_connected)
-        # self.bus.on("ovos.wifi.setup.completed", self.on_internet_connected)
-        self.bus.on('ovos.phal.wifi.plugin.fully_offline', self.on_fully_offline)
 
         # Core API handlers
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
@@ -199,6 +209,19 @@ class LinearLed(PHALPlugin):
             LOG.debug("Internet Disconnected")
             self.on_no_internet()
 
+    def on_network_state(self, message):
+        """
+        Handle a network state update from the connectivity events plugin
+        :param message: Message containing network state
+        """
+        new_state = message.data.get("state")
+        if new_state == "connected":
+            self.on_internet_connected(message)
+        elif new_state == "disconnected" and not self._fully_offline:
+            self.on_no_internet(message)
+        else:
+            LOG.warning(f"Unhandled network state change: {message.data}")
+
     @transient_animation
     def on_fully_offline(self, message):
         """
@@ -206,6 +229,7 @@ class LinearLed(PHALPlugin):
         :param message: Message object
         """
         LOG.info("Wifi plugin notified fully offline mode selected")
+        self._fully_offline = True
         self._internet_disconnected = False
         self._disconnected_animation.stop()
 
@@ -218,15 +242,11 @@ class LinearLed(PHALPlugin):
         if self._internet_disconnected:
             LOG.debug(f"Already disconnected")
             return
-        self._internet_disconnected = True
-        message = message.forward("ovos.phal.wifi.plugin.status") if \
-            message else Message("ovos.phal.wifi.plugin.status")
-        resp = self.bus.wait_for_response(message)
-        if resp and not resp.data.get('watchdog_active'):
-            LOG.info(f"Watchdog inactive: {resp.data}")
+        if self._fully_offline:
+            LOG.info("In Offline Mode")
             return
+        self._internet_disconnected = True
         LOG.debug(f"Starting Internet Disconnected Animation")
-        # TODO: Check ready settings and skill internet setting in config?
         with self._led_lock:
             self._disconnected_animation.start()
 
@@ -238,6 +258,7 @@ class LinearLed(PHALPlugin):
         """
         LOG.debug(f"Internet connection re-established")
         self._internet_disconnected = False
+        self._fully_offline = False
         self._disconnected_animation.stop()
 
     @transient_animation
