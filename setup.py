@@ -77,7 +77,7 @@ setup(
     description='Linear/Ring LED Interface',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=get_requirements('requirements.txt'),
+    install_requires=get_requirements('requirements/requirements.txt'),
     packages=find_packages(),
     include_package_data=True,
     entry_points={'ovos.plugin.phal': PLUGIN_ENTRY_POINT,
