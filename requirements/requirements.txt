@@ -1,4 +1,4 @@
 sj201-interface~=0.0.1
 ovos-plugin-manager~=0.0.21
 ovos-utils~=0.0.26
-mycroft-messagebus-client~=0.10
+ovos-bus-client~=0.0.3

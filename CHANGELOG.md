@@ -1,14 +1,12 @@
 # Changelog
 
-## [0.1.1a2](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.1.1a2) (2023-04-20)
+## [0.2.1a1](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.1a1) (2023-06-07)
 
-[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.1.0...0.1.1a2)
+[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.0...0.2.1a1)
 
 **Merged pull requests:**
 
-- Update automation to shared actions [\#19](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/19) ([NeonDaniel](https://github.com/NeonDaniel))
-- Updated Network State handling [\#18](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/18) ([NeonDaniel](https://github.com/NeonDaniel))
-- Implement Default LED States [\#15](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/15) ([NeonDaniel](https://github.com/NeonDaniel))
+- Update messagebus dependency [\#21](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/21) ([NeonDaniel](https://github.com/NeonDaniel))
 
 
 
