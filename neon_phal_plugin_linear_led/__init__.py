@@ -110,7 +110,7 @@ class LinearLed(PHALPlugin):
         self.bus.emit(Message('ovos.theme.get'))
 
         # Check mic switch status
-        self.bus.emit(Message('mycroft.mic.status'))
+        self.bus.emit(Message('mycroft.mic.get_status'))
 
         # Start internet animation
         if self._internet_disconnected:
@@ -198,14 +198,48 @@ class LinearLed(PHALPlugin):
                     self.on_recognition_unknown)
         # TODO: Define method to stop any active/queued animations
 
+    @property
+    def is_muted(self):
+        message = Message("mycroft.mic.get_status")
+        resp = self.bus.wait_for_response(message)
+        if not resp:
+            LOG.warning(f"No mic status response, use last known value")
+            return self._is_muted
+        muted = resp.data.get('muted')
+        if muted is None:
+            LOG.error(f"Invalid mic status response. data={resp.data}")
+            return self._is_muted
+        self._is_muted = muted
+        return self._is_muted
+
+    @property
+    def internet_disconnected(self):
+        if self._fully_offline:
+            LOG.debug("Offline mode, never report disconnected")
+            return False
+        message = Message("ovos.PHAL.internet_check")
+        resp = self.bus.wait_for_response(message)
+        if not resp:
+            LOG.warning("No network status responses, use last known value")
+            return self._internet_disconnected
+        internet = message.data.get('internet_connected')
+        if internet is None:
+            LOG.error(f"Invalid internet status response. data={resp.data}")
+            return self._internet_disconnected
+        if internet:
+            # TODO: Better method to check when to stop animation
+            self._disconnected_animation.stop()
+        self._internet_disconnected = not internet
+        return self._internet_disconnected
+
     def check_state(self):
         """
         Check current state and show a persistent animation as appropriate.
         """
-        if self._is_muted:
+        if self.is_muted:
             LOG.debug("Mic Muted")
             self.on_mic_mute()
-        elif self._internet_disconnected:
+        elif self.internet_disconnected:
             LOG.debug("Internet Disconnected")
             self.on_no_internet()
 
@@ -242,6 +276,7 @@ class LinearLed(PHALPlugin):
         if self._internet_disconnected:
             LOG.debug(f"Already disconnected")
             return
+        # TODO: Consider LAN-only handling
         if self._fully_offline:
             LOG.info("In Offline Mode")
             return
