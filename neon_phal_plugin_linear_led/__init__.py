@@ -43,6 +43,9 @@ def transient_animation(func):
     Mark a method as transient and check for persistent states on animation end.
     """
     def wrapper(self, *args, **kwargs):
+        # Ensure persistent animations pause before transient animation start
+        for anim in self.persistent_animations:
+            anim.stop()
         func(self, *args, **kwargs)
         self.check_state()
 
@@ -116,6 +119,11 @@ class LinearLed(PHALPlugin):
         if self._internet_disconnected:
             LOG.debug("No internet at init")
             self.on_no_internet()
+
+        # Persistent animations should be explicitly paused before transients
+        self.persistent_animations = [self._disconnected_animation,
+                                      self._sleep_animation,
+                                      self._mute_animation]
 
         # TODO: Define a queue for animations to handle synchronous animations
         #       and restoring persistent states
@@ -242,6 +250,7 @@ class LinearLed(PHALPlugin):
         elif self.internet_disconnected:
             LOG.debug("Internet Disconnected")
             self.on_no_internet()
+        # TODO: Track sleeping state
 
     def on_network_state(self, message):
         """
