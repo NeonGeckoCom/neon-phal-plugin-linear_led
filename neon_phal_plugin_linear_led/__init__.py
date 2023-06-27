@@ -44,8 +44,7 @@ def transient_animation(func):
     """
     def wrapper(self, *args, **kwargs):
         # Ensure persistent animations pause before transient animation start
-        for anim in self.persistent_animations:
-            anim.stop()
+        self.pre_transient()
         func(self, *args, **kwargs)
         self.check_state()
 
@@ -230,7 +229,7 @@ class LinearLed(PHALPlugin):
         if not resp:
             LOG.warning("No network status responses, use last known value")
             return self._internet_disconnected
-        internet = message.data.get('internet_connected')
+        internet = resp.data.get('internet_connected')
         if internet is None:
             LOG.error(f"Invalid internet status response. data={resp.data}")
             return self._internet_disconnected
@@ -239,6 +238,11 @@ class LinearLed(PHALPlugin):
             self._disconnected_animation.stop()
         self._internet_disconnected = not internet
         return self._internet_disconnected
+
+    def pre_transient(self):
+        LOG.debug("Stopping persistent animations")
+        for animation in self.persistent_animations:
+            animation.stop()
 
     def check_state(self):
         """
