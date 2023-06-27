@@ -25,7 +25,6 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 from threading import RLock
 
 from ovos_bus_client import Message
@@ -286,9 +285,9 @@ class LinearLed(PHALPlugin):
         :param message: Message object
         """
         LOG.debug("Bus notified no internet")
-        if self._internet_disconnected:
-            LOG.debug(f"Already disconnected")
-            return
+        # if self._internet_disconnected:
+        #     LOG.debug(f"Already disconnected")
+        #     return
         # TODO: Consider LAN-only handling
         if self._fully_offline:
             LOG.info("In Offline Mode")
