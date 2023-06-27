@@ -222,7 +222,7 @@ class LinearLed(PHALPlugin):
         if not resp:
             LOG.warning("No network status responses, use last known value")
             return self._internet_disconnected
-        internet = message.data.get('internet_connected')
+        internet = resp.data.get('internet_connected')
         if internet is None:
             LOG.error(f"Invalid internet status response. data={resp.data}")
             return self._internet_disconnected
