@@ -43,7 +43,7 @@ def transient_animation(func):
     """
     def wrapper(self, *args, **kwargs):
         # Ensure persistent animations pause before transient animation start
-        self.pre_transient()
+        self.stop_persistent()
         func(self, *args, **kwargs)
         self.check_state()
 
@@ -238,7 +238,11 @@ class LinearLed(PHALPlugin):
         self._internet_disconnected = not internet
         return self._internet_disconnected
 
-    def pre_transient(self):
+    def stop_persistent(self):
+        """
+        Stop any persistent animations. This is used to clear animations before
+        displaying some transient or other persistent animation.
+        """
         LOG.debug("Stopping persistent animations")
         for animation in self.persistent_animations:
             animation.stop()
@@ -398,6 +402,7 @@ class LinearLed(PHALPlugin):
         Handle an event notifying the mic has been muted. (persistent LED state)
         :param message: Message object
         """
+        self.stop_persistent()
         LOG.debug('muted')
         with self._led_lock:
             self._is_muted = True
@@ -437,6 +442,7 @@ class LinearLed(PHALPlugin):
         Handle an event notifying recording has begun (wake word detected).
         :param message: Message object
         """
+        self.stop_persistent()
         LOG.debug('record begin')
         with self._led_lock:
             self._listen_animation.start(self.listen_timeout_sec)
