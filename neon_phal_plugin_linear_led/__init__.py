@@ -33,7 +33,7 @@ from ovos_utils.log import LOG
 from ovos_plugin_manager.templates.phal import PHALPlugin
 from ovos_plugin_manager.hardware.led import Color, AbstractLed
 from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
-    FillLedAnimation, BlinkLedAnimation, AlternatingLedAnimation,\
+    FillLedAnimation, BlinkLedAnimation, AlternatingLedAnimation, \
     animations, LedAnimation
 from ovos_utils.network_utils import is_connected
 
