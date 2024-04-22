@@ -1,20 +1,12 @@
 # Changelog
 
-## [0.2.2a2](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.2a2) (2023-06-27)
+## [0.2.3a1](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.3a1) (2024-04-08)
 
-[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.2a1...0.2.2a2)
-
-**Merged pull requests:**
-
-- Fix typo in response message handling [\#27](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/27) ([NeonDaniel](https://github.com/NeonDaniel))
-
-## [0.2.2a1](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.2a1) (2023-06-23)
-
-[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.1...0.2.2a1)
+[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.2...0.2.3a1)
 
 **Merged pull requests:**
 
-- Explicitly update state before showing persistent animations [\#25](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/25) ([NeonDaniel](https://github.com/NeonDaniel))
+- Update ovos-utils to allow 0.X versions [\#29](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/29) ([NeonDaniel](https://github.com/NeonDaniel))
 
 
 
