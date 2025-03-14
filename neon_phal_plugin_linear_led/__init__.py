@@ -35,7 +35,7 @@ from ovos_plugin_manager.hardware.led import Color, AbstractLed
 from ovos_plugin_manager.hardware.led.animations import BreatheLedAnimation, \
     FillLedAnimation, BlinkLedAnimation, AlternatingLedAnimation, \
     animations, LedAnimation
-from ovos_utils.network_utils import is_connected
+from ovos_utils.network_utils import is_connected_dns
 
 
 def transient_animation(func):
@@ -55,7 +55,7 @@ class LinearLed(PHALPlugin):
         self.leds.fill(Color.BLACK.as_rgb_tuple())
 
         self._is_muted = False
-        self._internet_disconnected = not is_connected()
+        self._internet_disconnected = not is_connected_dns()
 
         # Assume initial state as default (until connection)
         # TODO: Read fully offline setting from config
