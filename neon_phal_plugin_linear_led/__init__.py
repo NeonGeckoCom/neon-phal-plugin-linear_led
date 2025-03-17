@@ -197,7 +197,7 @@ class LinearLed(PHALPlugin):
     @property
     def is_muted(self):
         message = Message("mycroft.mic.get_status")
-        resp = self.bus.wait_for_response(message)
+        resp = self.bus.wait_for_response(message, timeout=5)
         if not resp:
             LOG.warning(f"No mic status response, use last known value")
             return self._is_muted
