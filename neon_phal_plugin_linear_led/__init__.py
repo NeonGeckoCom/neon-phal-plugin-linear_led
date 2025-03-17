@@ -178,13 +178,9 @@ class LinearLed(PHALPlugin):
         # Network event handler
         self.bus.on("mycroft.network.state", self.on_network_state)
 
-        # TODO: below events should be consumed in connectivity events plugin
-        #       directly
         # Plugin notify offline mode selected
         self.bus.on('ovos.phal.wifi.plugin.fully_offline',
                     self.on_fully_offline)
-        # Generic internet connected notification
-        self.bus.on('mycroft.internet.connected', self.on_internet_connected)
 
         # Core API handlers
         self.bus.on('neon.linear_led.show_animation', self.on_show_animation)
@@ -259,7 +255,9 @@ class LinearLed(PHALPlugin):
     @transient_animation
     def on_fully_offline(self, message):
         """
-        Handle an event notifying the user selected offline operation
+        Handle an event notifying the user selected offline operation. If this
+        is received, then the device should not show any indication that the
+        device is offline.
         :param message: Message object
         """
         LOG.info("Wifi plugin notified fully offline mode selected")
