@@ -1,24 +1,12 @@
 # Changelog
 
-## [0.2.4a2](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.4a2) (2025-03-14)
+## [0.2.5a1](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.5a1) (2025-03-18)
 
-[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.4a1...0.2.4a2)
-
-**Implemented enhancements:**
-
-- \[FEAT\] Update automation [\#24](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/issues/24)
+[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.4...0.2.5a1)
 
 **Merged pull requests:**
 
-- Resolve deprecation warning; update license, dependencies, and automation [\#32](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/32) ([NeonDaniel](https://github.com/NeonDaniel))
-
-## [0.2.4a1](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/tree/0.2.4a1) (2024-09-19)
-
-[Full Changelog](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/compare/0.2.3...0.2.4a1)
-
-**Merged pull requests:**
-
-- Update dependencies to allow OVOS 0.x dependency resolution [\#31](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/31) ([NeonDaniel](https://github.com/NeonDaniel))
+- Update internet connection message handling [\#34](https://github.com/NeonGeckoCom/neon-phal-plugin-linear_led/pull/34) ([NeonDaniel](https://github.com/NeonDaniel))
 
 
 
