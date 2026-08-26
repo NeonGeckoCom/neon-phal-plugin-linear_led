@@ -25,7 +25,6 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 from threading import RLock
 
 from ovos_bus_client import Message
@@ -43,6 +42,8 @@ def transient_animation(func):
     Mark a method as transient and check for persistent states on animation end.
     """
     def wrapper(self, *args, **kwargs):
+        # Ensure persistent animations pause before transient animation start
+        self.stop_persistent()
         func(self, *args, **kwargs)
         self.check_state()
 
@@ -116,6 +117,11 @@ class LinearLed(PHALPlugin):
         if self._internet_disconnected:
             LOG.debug("No internet at init")
             self.on_no_internet()
+
+        # Persistent animations should be explicitly paused before transients
+        self.persistent_animations = [self._disconnected_animation,
+                                      self._sleep_animation,
+                                      self._mute_animation]
 
         # TODO: Define a queue for animations to handle synchronous animations
         #       and restoring persistent states
@@ -233,6 +239,15 @@ class LinearLed(PHALPlugin):
         self._internet_disconnected = not internet
         return self._internet_disconnected
 
+    def stop_persistent(self):
+        """
+        Stop any persistent animations. This is used to clear animations before
+        displaying some transient or other persistent animation.
+        """
+        LOG.debug("Stopping persistent animations")
+        for animation in self.persistent_animations:
+            animation.stop()
+
     def check_state(self):
         """
         Check current state and show a persistent animation as appropriate.
@@ -243,6 +258,7 @@ class LinearLed(PHALPlugin):
         elif self.internet_disconnected:
             LOG.debug("Internet Disconnected")
             self.on_no_internet()
+        # TODO: Track sleeping state
 
     def on_network_state(self, message):
         """
@@ -276,9 +292,9 @@ class LinearLed(PHALPlugin):
         :param message: Message object
         """
         LOG.debug("Bus notified no internet")
-        if self._internet_disconnected:
-            LOG.debug(f"Already disconnected")
-            return
+        # if self._internet_disconnected:
+        #     LOG.debug(f"Already disconnected")
+        #     return
         # TODO: Consider LAN-only handling
         if self._fully_offline:
             LOG.info("In Offline Mode")
@@ -389,6 +405,7 @@ class LinearLed(PHALPlugin):
         Handle an event notifying the mic has been muted. (persistent LED state)
         :param message: Message object
         """
+        self.stop_persistent()
         LOG.debug('muted')
         with self._led_lock:
             self._is_muted = True
@@ -428,6 +445,7 @@ class LinearLed(PHALPlugin):
         Handle an event notifying recording has begun (wake word detected).
         :param message: Message object
         """
+        self.stop_persistent()
         LOG.debug('record begin')
         with self._led_lock:
             self._listen_animation.start(self.listen_timeout_sec)
